@@ -1,4 +1,4 @@
-package com.example.calculatortutapp.components
+package com.example.calculatortutapp.ui.components
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -11,18 +11,18 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.calculatortutapp.R
 
+// Nav routes
 sealed class BottomNavItem(val route: String, val icon: Int, val title: String) {
     object Home : BottomNavItem("home", R.drawable.ic_home, "Home")
     object Calculator : BottomNavItem("calculator", R.drawable.ic_calculator, "Calculator")
-    object Settings : BottomNavItem("settings", R.drawable.ic_settings, "Settings")
+    object DB : BottomNavItem("db", R.drawable.ic_db, "DB")
 }
 
 @Composable
 fun BottomNavigation(navController: NavController) {
     val items = listOf(
-        BottomNavItem.Home,
         BottomNavItem.Calculator,
-        BottomNavItem.Settings
+        BottomNavItem.DB
     )
     NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()

@@ -3,11 +3,17 @@ package com.example.calculatortutapp.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import com.example.calculatortutapp.database.entities.Calculation
+import com.example.calculatortutapp.database.repository.CalculatorRepository
 import com.example.calculatortutapp.model.CalculatorAction
+import kotlinx.coroutines.launch
 
 
-class CalculatorViewModel : ViewModel() {
+class CalculatorViewModel(private val repository: CalculatorRepository) : ViewModel() {
 
     // State
     var num1 by mutableStateOf("")
@@ -46,6 +52,8 @@ class CalculatorViewModel : ViewModel() {
             "/" -> if (n2 != 0.0) (n1 / n2).toString() else "Error"
             else -> ""
         }
+        // Insert into DB
+        insert("$n1 $operator $n2", result)
     }
 
     private fun clear() {
@@ -53,6 +61,16 @@ class CalculatorViewModel : ViewModel() {
         num2 = ""
         operator = ""
         result = ""
+    }
+
+    val allCalculations: LiveData<List<Calculation>> = repository.allCalculations.asLiveData()
+
+    fun insert(expression: String, result: String) = viewModelScope.launch {
+        repository.insert(Calculation(expression = expression, result = result))
+    }
+
+    fun clearHistory() = viewModelScope.launch {
+        repository.deleteAll()
     }
 }
 

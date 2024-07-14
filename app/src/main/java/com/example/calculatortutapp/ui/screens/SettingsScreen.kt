@@ -1,4 +1,6 @@
-package com.example.calculatortutapp.screens
+@file:JvmName("SettingsScreenKt")
+
+package com.example.calculatortutapp.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +18,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.calculatortutapp.stores.UserPreferences
@@ -24,15 +27,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen2(onBackClick: () -> Unit,
+fun SettingsScreen(onBackClick: () -> Unit,
                     userPreferencesRepository: UserPreferencesRepository
 ) {
     // Init user preferences
     val userPreferences by userPreferencesRepository.userPreferencesFlow.collectAsState(
         initial = UserPreferences()
     )
+    val scope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -54,7 +59,7 @@ fun SettingsScreen2(onBackClick: () -> Unit,
             Switch(
                 checked = userPreferences.isDarkMode,
                 onCheckedChange = {
-                    CoroutineScope(Dispatchers.IO).launch {
+                    scope.launch {
                         userPreferencesRepository.updateIsDarkMode(it)
                     }
                 },
@@ -65,7 +70,7 @@ fun SettingsScreen2(onBackClick: () -> Unit,
             Slider(
                 value = userPreferences.decimalPlaces.toFloat(),
                 onValueChange = {
-                    CoroutineScope(Dispatchers.IO).launch {
+                    scope.launch {
                         userPreferencesRepository.updateDecimalPlaces(it.toInt())
                     }
                 },
